@@ -56,17 +56,36 @@ ReactDOM.render(virtualDom, trueDOM);`;
             </div>
         )
     }
-    /* 生命周期函数 */ 
-    constructor(props){
-        super(props);
-    }
-    componentWillMount(){} // 计划废弃
-    componentDidMount(){} // 一般在这里开定时器和AJAX请求
-    shouldComponentUpdate(){}// 一般在setState时由底层调用, 返回false就不能update了
-    componentWillUpdate(){} // 计划废弃
-    componentDidUpdate(){}
-    componentWillUnmount(){} // 手动卸载需要用ReactDOM.unmountComponentAtNode(DOM元素) 一般在这里面做一些收尾工作,比如关定时器回收一些资源
+    
+    /* 生命周期 */
+    1.挂载
+当组件实例被创建并插入 DOM 中时，其生命周期调用顺序如下：
+
+constructor()
+static getDerivedStateFromProps(props, state){ return null || object} // 根据props初始化state
+render()
+componentDidMount()
 }
+2.更新(可以通过setState和forceUpdate(强制render))
+当组件的 props 或 state 发生变化时会触发更新。组件更新的生命周期调用顺序如下：
+
+static getDerivedStateFromProps(props, state){ return null || object} // 根据props初始化state
+shouldComponentUpdate()
+render()
+getSnapshotBeforeUpdate(prevProps, prevState){ return 传递给componentDidUpdate的数据}
+componentDidUpdate(prevProps, prevState，接受getSnapshotBeforeUpdate给的数据)
+3.卸载
+当组件从 DOM 中移除时会调用如下方法：
+
+componentWillUnmount()
+4.错误处理
+当渲染过程，生命周期，或子组件的构造函数中抛出错误时，会调用如下方法：
+
+static getDerivedStateFromError()
+componentDidCatch()
+
+
+
 // 输入属性太多也可以用react和babel帮助实现的扩展语法<Weather {...props}/> props是对象
 ReactDOM.render(<Weather month="march" date={23}/>, trueDOM);`;
             window.activeTextEditor?.insertSnippet(new SnippetString(snippets))
