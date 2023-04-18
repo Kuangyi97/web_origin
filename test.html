@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 标签引入react 要同时引入react和react-dom umd模块化浏览器端和服务端通用 -->
+    <!-- babel用于解析JSX语法 引入babel-standalone版本 一次引入就可以解决问题 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/babel-standalone/7.21.4/babel.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+    <title>标签引入react</title>
+</head>
+<body>
+    <div class="test"></div>
+    <!-- 要用babel解析JSX要加上type="text/babel" -->
+    <script type="text/babel">
+        let trueDOM = document.querySelector('.test');
+        class Weather extends React.Component{
+            // 用props-types来实现强制类型和默认值设置
+            static propTypes = {    // 强制类型据说要在开发者模式下才生效
+                month: PropTypes.string.isRequired,
+                date: PropTypes.number,
+            }
+            static defaultProps = {
+                month:'july',
+                date: 15
+            }
+
+            // 设置拿子元素DOM的容器
+            h3 = React.createRef();
+
+            state = {
+                isHot: true
+            }
+            // 有输入属性也不一定非要写constrctor
+            constructor(props){
+                super(props);
+            }
+            // switchWeather也可以用箭头函数来巧妙规避react方法中this指向undefine的问题（避免随意通过this修改组件实例上的值）
+            // 如果switchWeather用箭头函数，下面绑定事件就不用bind了
+            switchWeather(){
+                let { isHot } = this.state;
+                // 修改state只能通过setState
+                this.setState({
+                    isHot: !isHot
+                })
+            }
+            // 绑定事件用驼峰名
+            // render 和 constructor可以拿到this
+            // ref可以直接取名 在this.refs里面拿    也可以用回调函数的形式 <h3 ref={dom => this.h3 = dom}>{month} {date}</h3>
+            render(){
+                let { isHot } = this.state;
+                let { month, date } = this.props;
+                return (
+                    <div id='my-component'>
+                        <h3 onClick={this.switchWeather.bind(this)}>今天的天气真{isHot? '炎热' : '寒冷'}</h3>
+                        <h3 ref={this.h3}>{month} {date}</h3>
+                    </div>
+                )
+            }
+        }
+        // 输入属性太多也可以用react和babel帮助实现的扩展语法<Weather {...props}/> props是对象
+        ReactDOM.render(<Weather month="march" date='23'/>, trueDOM);
+    </script>
+</body>
+</html>
